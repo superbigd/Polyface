@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Polyfacing.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Polyfacing.Core.Decorations.Graphing.Tree
+namespace Polyfacing.Domain.Graphing.Tree
 {
     public class Graph : MarshalByRefObject, IKnowsPolyface
     {
@@ -15,16 +16,15 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
         #endregion
 
         #region Ctor
-        private Graph(object val)
+        private Graph()
         {
             this.Polyface = Polyface<Graph>.New(this);
-
-            this.Root = this.CreateNode(val);
+            this.Root = null;
             this.Current = this.Root;
         }
-        public static Graph New(object val)
+        public static Graph New()
         {
-            return new Graph(val);
+            return new Graph();
         }
         #endregion
 
@@ -54,11 +54,26 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
             //look for an existing node with the same value
             return Node.New(this.GetNextId(), val, this.Current);
         }
+        private bool InitRoot(object val)
+        {
+            lock (this._stateLock)
+            {
+                if (this.Root != null)
+                    return false;
+
+                this.Root = this.CreateNode(val);
+                this.Current = this.Root;
+                return true;
+            }
+        }
         #endregion
 
         #region Mutators
         public Graph AddChild(object val)
         {
+            if (this.InitRoot(val))
+                return this;
+
             lock (this._stateLock)
             {
                 this.Current = this.Current.AppendChild(this.GetNextId(), val);
@@ -99,6 +114,9 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
         }
         public Graph AddNext(object val)
         {
+            if (this.InitRoot(val))
+                return this;
+
             lock (this._stateLock)
             {
                 this.Current = this.Current.Parent.AppendChild(this.GetNextId(), val);
@@ -107,6 +125,9 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
         }
         public Graph AddPrevious(object val)
         {
+            if (this.InitRoot(val))
+                return this;
+
             lock (this._stateLock)
             {
                 this.Current = this.Current.Parent.PrependChild(this.GetNextId(), val);
@@ -123,7 +144,7 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
         }
         public Graph MoveUp()
         {
-            if(this.Current.Parent != null)
+            if (this.Current.Parent != null)
                 this.Current = this.Current.Parent;
             return this;
         }
@@ -136,7 +157,7 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
                 return this;
 
             this.Current = this.Current.Children[i];
-            
+
             return this;
         }
         public Graph MoveNext()

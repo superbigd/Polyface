@@ -52,7 +52,7 @@ namespace Polyfacing.Core.Decorations.Interception
             //replace the root with an intercepting proxy to the root
             polyface.WithHasRootEditing().ReplaceRoot((origRoot) =>
             {
-                return this.GetInterceptingProxy(root);
+                return this.GetInterceptingProxy(origRoot);
             });
 
             return this;

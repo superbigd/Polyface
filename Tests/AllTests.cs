@@ -10,9 +10,9 @@ namespace Polyfacing.Tests
     {
         public static void Test()
         {
-            //DecorationTests.Test();
-            //StringableTests.Test();
-            //GraphTests.Test();
+            DecorationTests.Test();
+            StringableTests.Test();
+            GraphTests.Test();
             GraphTests.TestTrace();
 
         }

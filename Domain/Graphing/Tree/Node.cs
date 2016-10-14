@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Polyfacing.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Polyfacing.Core.Decorations.Graphing.Tree
+namespace Polyfacing.Domain.Graphing.Tree
 {
     /// <summary>
     /// is a node in a graph.  standalone thing  

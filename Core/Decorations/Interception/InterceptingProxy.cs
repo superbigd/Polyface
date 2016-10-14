@@ -48,7 +48,9 @@ namespace Polyfacing.Core.Decorations.Interception
         public override IMessage Invoke(IMessage msg)
         {
             //pass the proxy implementation back to the strategy
-            return this._strategy.Invoke(this.Decorated, msg);
+            var rv = this._strategy.Invoke(this.GetTransparentProxy(), this.Decorated, msg);
+
+            return rv;
         }
         #endregion
 

@@ -1,4 +1,5 @@
-﻿using Polyfacing.Core.Decorations.Graphing.Tree;
+﻿
+using Polyfacing.Domain.Graphing.Tree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,9 @@ namespace Polyfacing.Tests
         {
 
             //build a simple graph - test mutation
-            var graph = Graph.New("root");
-            var graph2 = Graph.New("root");
+            var graph = Graph.New().AddChild("root");
+            var graph2 = Graph.New().AddChild("root");
+
 
             for (int i = 0; i < 10; i++)
             {
@@ -37,11 +39,11 @@ namespace Polyfacing.Tests
                     throw new InvalidOperationException();
 
                 graph.MoveNext();
-                if(!graph.Current.Value.Equals(i))
+                if (!graph.Current.Value.Equals(i))
                     throw new InvalidOperationException();
-                
+
                 graph.MoveNext();
-                if(!graph.Current.Value.Equals("next to " + i))
+                if (!graph.Current.Value.Equals("next to " + i))
                     throw new InvalidOperationException();
 
                 graph.MovePrevious().MovePrevious();
@@ -54,17 +56,28 @@ namespace Polyfacing.Tests
         {
 
             //build a simple graph - test mutation
-            var graph = Graph.New("root");
+            var graph = Graph.New();
             var tracer = graph.TypedPolyface.WithTracer().AsTracer();
 
+            tracer.TypedRoot.AddChild("root");
             for (int i = 0; i < 10; i++)
             {
-                tracer.TypedRoot.AddChild(i).AddNext("next to " + i).AddPrevious("previous to " + i);
+                var g = tracer.TypedRoot.AddChild(i).AddNext("next to " + i).AddPrevious("previous to " + i);
+
+                //below is call by call interception
+                //var g = tracer.TypedRoot.AddChild(i);
+                //tracer.TypedRoot.AddNext("next to " + i);
+                //tracer.TypedRoot.AddPrevious("previous to " + i);
             }
 
             //this should be picked up on the trace
             var calls = tracer.Calls;
 
+            //now replay the call
+            var graph2 = tracer.ReplayCalls();
+
+            if (!(graph.WithCompare().IsEquivalent(graph2)))
+                throw new InvalidOperationException();
 
         }
     }

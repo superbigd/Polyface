@@ -14,15 +14,12 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
     /// </summary>
     public class GraphTracerDump : DecorationBase<Graph>
     {
-
-
         #region Ctor
         public GraphTracerDump(Graph decorated)
             : base(decorated)
         {
             //add the dependencies
             this.TypedPolyface.WithTracer();
-
         }
 
         public static GraphTracerDump New(Graph decorated)
@@ -40,13 +37,18 @@ namespace Polyfacing.Core.Decorations.Graphing.Tree
 
             foreach (var each in calls)
             {
-                //string line = string.Format("{0},{1}", each.Name, each.Args.AppendFormatEach((x)=>{return x.Serialize();})
-
+                string line = GetTraceLine(each);
+                rv.Add(line);
             }
 
             return rv;
         }
+        private string GetTraceLine(UnitofWorkInfo uow)
+        {
+//            string.Format("{0},{1}", each.Name, each.Args.AppendFormatEach((x)=>{return x.Serialize();})
 
+            return string.Empty;
+        }
         #endregion
     }
 

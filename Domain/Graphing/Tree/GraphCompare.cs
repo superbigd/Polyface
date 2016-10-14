@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Polyfacing.Core.Decorations.Interception;
 using System.Runtime.Remoting.Messaging;
+using Polyfacing.Core;
 
-namespace Polyfacing.Core.Decorations.Graphing.Tree
+namespace Polyfacing.Domain.Graphing.Tree
 {
 
     public class GraphCompare : DecorationBase<Graph>
