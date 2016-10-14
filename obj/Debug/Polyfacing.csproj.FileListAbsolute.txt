@@ -1,0 +1,10 @@
+C:\notes\piirtaa\Polyface\bin\Debug\Polyfacing.exe
+C:\notes\piirtaa\Polyface\bin\Debug\Polyfacing.pdb
+C:\notes\piirtaa\Polyface\obj\Debug\Polyfacing.exe
+C:\notes\piirtaa\Polyface\obj\Debug\Polyfacing.pdb
+C:\notes\piirtaa\Polyface\bin\Debug\Polyfacing.exe.config
+C:\notes\piirtaa\Polyface\bin\Debug\Jil.dll
+C:\notes\piirtaa\Polyface\bin\Debug\Sigil.dll
+C:\notes\piirtaa\Polyface\bin\Debug\Jil.pdb
+C:\notes\piirtaa\Polyface\bin\Debug\Jil.xml
+C:\notes\piirtaa\Polyface\bin\Debug\Sigil.xml

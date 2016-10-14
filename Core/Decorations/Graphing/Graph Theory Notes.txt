@@ -1,0 +1,77 @@
+﻿https://en.wikipedia.org/wiki/Tree_(data_structure)
+
+A tree:-----------------------------------------
+	-has parent
+	-has children (implies siblingness)
+	-has root/origin
+	-moves (from perspective of current node)
+		up (to single node), down (to list of nodes), previous (to a single node), next (to a single node)
+	-mutates (from perspective of current node)
+		add child, remove child, add next, add previous, remove next, remove previous
+			-note there are no parent mutations from the perspective of a given node
+	-serializes
+		-to a nested data structure (eg. xml, json)
+	-domains
+		-anything hierarchical
+		-call stack traces
+
+Testing trees and traversable structures 
+	-can duplicate structure by replaying mutations side by side
+	-can duplicate position by replaying mutations/movement side by side
+	-each node can traverse to root
+	
+
+A multi-parent tree:----------------------------
+	-has parents (implies siblingness)
+	-has children (implies siblingness)
+	-has root/origin (per layer.  represents the first on that layer)
+		-moves (from perspective of current node)
+		up (to a list of nodes), down (to list of nodes), previous (to a single node), next (to a single node)
+	-mutates (from perspective of current node)
+		add child, remove child, add next, add previous, remove next, remove previous, add parent, remove parent
+	-serializes
+		-to a grid, 2d array
+
+Discussion on parent trees --------------------------
+	Motion is akin to moving along a grid.  
+		Next, Previous move along the sibling axis
+		Up, Down move along the parent/child axis
+			or, rephrased ...
+				NextD, PreviousD move along the D axis (eg.  Up,Down where Dness is parent/child)
+	Mutation is likewise.
+		Add Parent, Add Child, Remove Parent, Remove Child, Remove Next, Add Next, Remove Previous, Add Previous
+			or, rephrased ...
+				Add/Remove 
+					+
+				Direction (Parent, Child, Next, Previous)
+
+	We can extend this idea as a general design.
+		Add/Remove/Move 
+		Direction 
+			Up/Down
+			Left/Right
+			In/Out
+			Axis0/Axis1
+			...
+			directionality is a duality axis.
+				When an Axis is created, the first node on that axis is the Origin.  
+		
+		Add Direction 
+			introduces a Duality pair + Current Position on Duality Axis 
+		
+		Implementation:
+			Decoratively
+				Each Axis has Name, Origin, AddNext(), AddPrevious(), MoveNext(), MovePrevious(), Current		
+					each node knows:
+						value
+						position relative to axis origin at the time of node creation
+					
+				Decorating an Axis upon an Axis introduces:
+					AddNext(axis), AddPrevious(axis), MoveNext(axis), MovePrevious(axis), Current(axis)
+						each node knows:
+							value
+							all axis positions at the time of node creation 				
+					List<Axis>
+
+
+	
