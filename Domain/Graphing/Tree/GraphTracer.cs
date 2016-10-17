@@ -7,6 +7,7 @@ using Polyfacing.Core.Decorations.Interception;
 using System.Runtime.Remoting.Messaging;
 using System.Diagnostics;
 using Polyfacing.Core;
+using Polyfacing.Core.Extensions;
 
 namespace Polyfacing.Domain.Graphing.Tree
 {

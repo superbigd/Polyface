@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
+using Polyfacing.Core.Extensions;
 
 namespace Polyfacing.Core
 {
