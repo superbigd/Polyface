@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Polyfacing.Core;
+using Polyfacing.Core.Decorations.Interception;
+using Polyfacing.Domain.Graphing.Tree;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
-using Polyfacing.Core.Decorations.Interception;
-using System.Runtime.Remoting.Messaging;
-using System.Diagnostics;
-using Polyfacing.Core;
-using Polyfacing.Domain.Graphing.Tree;
 
 namespace Polyfacing.Domain.CallNarration
 {
@@ -21,57 +21,11 @@ namespace Polyfacing.Domain.CallNarration
         public HasCallNarration(T decorated)
             : base(decorated)
         {
-            this.CallsToIntercept = new List<string>();
-            this.CallGraph = Graph.New();
-
+            //this.CallsToIntercept = new List<string>();
+            this.Narration = NarrationGraph.New();
+            
             //add interception logic and then intercept the root
-            this.TypedPolyface.WithHasInterception(InterceptionStrategy.New((proxy, target, msg) =>
-            {
-                IMethodCallMessage call = msg as IMethodCallMessage;
-
-                //filter
-                Debug.WriteLine("begin interception " + call.MethodName);
-                if (!this.CallsToIntercept.Contains(call.MethodName))
-                {
-                    Debug.WriteLine("ignoring " + call.MethodName);
-
-                    return msg;
-                }
-
-                //mark the beginning of a call
-                this.CallGraph.AddChild(CallNarrativeNode.New().Begin(call.MethodName, target, call.Args.ToList()));
-
-                return msg;
-            }, (proxy, target, call, msg) =>
-            {
-                //we intercept the return side to trace
-                if (!(msg is ReturnMessage))
-                    throw new InvalidOperationException();
-
-                ReturnMessage rm = msg as ReturnMessage;
-
-                //filter
-                Debug.WriteLine("end interception " + rm.MethodName);
-                if (!this.CallsToIntercept.Contains(rm.MethodName))
-                {
-                    Debug.WriteLine("ignoring " + rm.MethodName);
-
-                    return msg;
-                }
-
-                CallNarrativeNode nodeValue = this.CallGraph.Current.Value as CallNarrativeNode;
-                nodeValue.End(rm.ReturnValue, rm.Exception);
-                this.CallGraph.MoveUp();
-
-                //if the return value is the same instance as the target, we assume it's a fluent call and return the proxy instead
-                if (object.ReferenceEquals(rm.ReturnValue, target))
-                {
-                    var newMsg = new ReturnMessage(proxy, rm.OutArgs, rm.OutArgCount, rm.LogicalCallContext, call);
-                    return newMsg;
-                }
-                else
-                    return msg;
-            }));
+            this.TypedPolyface.WithHasInterception(this.Narration.InterceptionStrategy);
         }
 
         public static HasCallNarration<T> New(T decorated)
@@ -81,14 +35,16 @@ namespace Polyfacing.Domain.CallNarration
         #endregion
 
         #region Properties
-        public List<string> CallsToIntercept { get; set; }
-        public Graph CallGraph { get; private set; }
+        public NarrationGraph Narration { get; private set; }
         #endregion
 
         #region Interception Configuration
         public HasCallNarration<T> InterceptRoot()
         {
+
+            this.Narration.Enabled  = false;
             this.TypedPolyface.AsHasInterception().InterceptRoot();
+            this.Narration.Enabled = true;
             return this;
         }
         #endregion

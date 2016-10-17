@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Polyfacing.Core.Decorations.Interception;
 using System.Runtime.Remoting.Messaging;
 using System.Web.Script.Serialization;
+using Polyfacing.Core;
 
-namespace Polyfacing.Core.Decorations.Graphing.Tree
+namespace Polyfacing.Domain.Graphing.Tree
 {
     /// <summary>
     /// decorates tracing with a text dump

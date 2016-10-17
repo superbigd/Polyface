@@ -66,38 +66,31 @@ namespace Polyfacing.Core
      * 
      */
 
-    /// <summary>
-    /// a container of named decorations of T
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// 
+
+    [Serializable]
     [DebuggerDisplay("{GetHashCode()}")]
-    public class Polyface<T> : MarshalByRefObject, IPolyface, IPolyface<T>
+    public abstract class Polyface : MarshalByRefObject, IPolyface
     {
         #region Declarations
-        private Dictionary<string, IDecorating> _faces = new Dictionary<string, IDecorating>(); 
-        private T _root;
+        private Dictionary<string, IDecorating> _faces = new Dictionary<string, IDecorating>();
+        private object _root;
         #endregion
 
         #region Ctor
-        private Polyface(T root)
+        protected Polyface(object root)
         {
             if (root == null)
                 throw new ArgumentNullException("root");
 
             this._root = root;
         }
-        public static Polyface<T> New(T root)
-        {
-            return new Polyface<T>(root);
-        }
         #endregion
 
         #region IPolyface
-        public Type OfType { get { return typeof(T); } }
-        public object GetRoot() { return this.Root; }
+        public Type OfType { get { return this.GetRoot().GetType(); } }
+        public object GetRoot() { return this._root; }
         public List<IDecorating> GetFaces() { return new List<IDecorating>(this.Faces.Values); }
-       
+        public List<string> GetFaceNames() { return new List<string>(this.Faces.Keys); }
         public IPolyface RemoveFace(string name)
         {
             this.Faces.Remove(name);
@@ -106,12 +99,11 @@ namespace Polyfacing.Core
         #endregion
 
         #region Properties
-        public T Root { get { return this._root; } }
         public Dictionary<string, IDecorating> Faces { get { return this._faces; } }
         #endregion
 
         #region Internal Mutators
-        internal void SetRoot(T root)
+        protected internal void SetRoot(object root)
         {
             this._root = root;
         }
@@ -142,8 +134,7 @@ namespace Polyfacing.Core
 
         #endregion
 
-        #region Fluent 
-
+        #region Fluent
         public IPolyface Has(string name, IDecorating facet)
         {
             if (facet == null)
@@ -151,22 +142,70 @@ namespace Polyfacing.Core
 
             var core = facet.GetLastNonNullDecorated();
 
-            if(!RemotingServices.IsTransparentProxy(this.Root))
-                if(!RemotingServices.IsTransparentProxy(core))
-                    if (!object.ReferenceEquals(this.Root, core))
+            if (!RemotingServices.IsTransparentProxy(this._root))
+                if (!RemotingServices.IsTransparentProxy(core))
+                    if (!object.ReferenceEquals(this._root, core))
                         throw new ArgumentOutOfRangeException("invalid decoration.  must decorate root");
 
             if (facet is IKnowsPolyface)
                 (facet as IKnowsPolyface).Polyface = this;
-            
+
             this._faces[name] = facet;
 
             return this;
         }
+        #endregion
+
+        #region Navigation
+        /// <summary>
+        /// walks the polyface performing the strategy.  
+        /// </summary>
+        /// <param name="strategy"></param>
+        public void Walk( /*key, core/face*/ Action<string, object> strategy)
+        {
+            if (strategy == null)
+                throw new ArgumentNullException("strategy");
+
+            strategy(null, this._root);
+            foreach (var each in this._faces)
+            {
+                strategy(each.Key, each.Value);
+            }
+        }
+        #endregion
+
+
+
+    }
+
+    /// <summary>
+    /// a container of named decorations of T
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// 
+    [Serializable]
+    [DebuggerDisplay("{GetHashCode()}")]
+    public class Polyface<T> : Polyface, IPolyface<T>
+    {
+        #region Ctor
+        private Polyface(T root) : base(root)
+        {
+        }
+        public static Polyface<T> New(T root)
+        {
+            return new Polyface<T>(root);
+        }
+        #endregion
+
+        #region Properties
+        public T Root { get { return (T)this.GetRoot(); } }
+        #endregion
+
+        #region Fluent
 
         public Polyface<T> Remove(string name)
         {
-            this._faces.Remove(name);
+            this.RemoveFace(name);
             return this;
         }
 
@@ -189,27 +228,6 @@ namespace Polyfacing.Core
         }
         #endregion
 
-
-        #region Navigation
-        /// <summary>
-        /// walks the polyface performing the strategy.  
-        /// </summary>
-        /// <param name="strategy"></param>
-        public void Walk( /*key, core/face*/ Action<string, object> strategy)
-        {
-            if (strategy == null)
-                throw new ArgumentNullException("strategy");
-
-            strategy(null, this.Root);
-            foreach(var each in this._faces)
-            {
-                strategy(each.Key, each.Value);
-            }
-        }
-        #endregion
-
-
-
     }
 
     public static class PolyfaceExtensions
@@ -221,12 +239,12 @@ namespace Polyfacing.Core
         /// <returns></returns>
         internal static IPolyface RefreshPolyfaceReferences(this IPolyface pf)
         {
-            pf.GetFaces().ForEach((x) => 
+            pf.GetFaces().ForEach((x) =>
             {
                 if (x is IKnowsPolyface)
                     (x as IKnowsPolyface).Polyface = pf;
             });
-            
+
             var root = pf.GetRoot();
             if (root is IKnowsPolyface)
                 (root as IKnowsPolyface).Polyface = pf;
@@ -259,12 +277,12 @@ namespace Polyfacing.Core
                 (thing is IKnowsPolyface) &&
                 ((thing as IKnowsPolyface).Polyface != null) &&
                 (Object.ReferenceEquals(thing, (thing as IKnowsPolyface).Polyface.GetRoot())))
-                    return true;
+                return true;
 
             return false;
         }
 
-        
+
     }
 
 }

@@ -27,6 +27,9 @@ namespace Polyfacing.Tests
             if (!(graph.WithCompare().IsEquivalent(graph2)))
                 throw new InvalidOperationException();
 
+            //dump it out
+            //var json = graph.WithDump().DumpToJSON();
+            var xml = graph.WithDump().DumpToXML();
 
             //test nav
             graph.MoveToRoot();

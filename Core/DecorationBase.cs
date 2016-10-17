@@ -40,6 +40,7 @@ namespace Polyfacing.Core
         #endregion
 
         #region IKnowsPolyface
+        [NonSerialized]
         private IPolyface _pf = null;
         public IPolyface Polyface
         {

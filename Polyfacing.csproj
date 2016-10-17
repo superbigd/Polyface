@@ -52,6 +52,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Services\Serialization\Binary\Copy of StrategizedSurrogateSelector.cs" />
+    <Compile Include="Core\Services\Serialization\Binary\PolyfaceSerializationSurrogate.cs" />
+    <Compile Include="Core\Services\Serialization\Binary\Strategies.cs" />
+    <Compile Include="Core\Services\Serialization\Binary\StrategizedSerializationSurrogate.cs" />
+    <Compile Include="Core\Services\Serialization\Binary\StrategizedSurrogateSelector.cs" />
+    <Compile Include="Core\ThingBase.cs" />
+    <Compile Include="Core\Utils\JSON2XML.cs" />
+    <Compile Include="Domain\CallNarration\ProxyOperand.cs" />
+    <Compile Include="Domain\CallNarration\NarrationGraph.cs" />
+    <Compile Include="Domain\Graphing\Tree\GraphDump.cs" />
     <Compile Include="Domain\Graphing\Tree\GraphCompare.cs" />
     <Compile Include="Core\Extensions\DynamicExtensions.cs" />
     <Compile Include="Core\Services\Serialization\BinarySerializer.cs" />
@@ -60,11 +70,12 @@
     <Compile Include="Core\Services\Serialization\Interfaces.cs" />
     <Compile Include="Core\Services\Serialization\JilSerializer.cs" />
     <Compile Include="Core\Services\Serialization\SerializationManager.cs" />
-    <Compile Include="Core\Services\Serialization\UnattributedTypeSerializationSurrogate.cs" />
+    <Compile Include="Core\Services\Serialization\Binary\UnattributedTypeSerializationSurrogate.cs" />
     <Compile Include="Core\Decorations\Stringableness\StringableList.cs" />
     <Compile Include="Core\Decorations\DecorationEditing.cs" />
     <Compile Include="Domain\Graphing\Tree\GraphTracer.cs" />
     <Compile Include="Domain\Graphing\Tree\Graph.cs" />
+    <Compile Include="Domain\Graphing\Tree\GraphTracerDump.cs" />
     <Compile Include="Domain\Graphing\Tree\Node.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -98,6 +109,7 @@
     <Compile Include="Tests\DecorationTests.cs" />
     <Compile Include="Tests\GraphTests.cs" />
     <Compile Include="Tests\MockFactory.cs" />
+    <Compile Include="Tests\NarrationTests.cs" />
     <Compile Include="Tests\StringableTests.cs" />
   </ItemGroup>
   <ItemGroup />

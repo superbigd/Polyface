@@ -15,6 +15,9 @@ namespace Polyfacing.Domain.CallNarration
      *  
      */
 
+
+
+
     /// <summary>
     /// the node in a narrative graph
     /// </summary>
@@ -32,7 +35,7 @@ namespace Polyfacing.Domain.CallNarration
 
         #region Properties
         public string Name { get; private set; }
-        public object Actor { get; private set; }
+        public int Actor { get; private set; }
         public List<object> Args { get; private set; }
         public object ReturnValue { get; private set; }
         public Exception Error { get; private set; }
@@ -41,16 +44,15 @@ namespace Polyfacing.Domain.CallNarration
         #endregion
 
         #region Methods
-        public CallNarrativeNode Begin(string name, object actor, List<object> args)
+        public CallNarrativeNode Begin(string name, int actor, List<object> args)
         {
             //if we've already begun we can't do this again
             if (HasStarted)
                 throw new InvalidOperationException("already started");
 
             this.HasStarted = true;
-
-            this.Name = name;
             this.Actor = actor;
+            this.Name = name;
             this.Args = args;
 
             return this;

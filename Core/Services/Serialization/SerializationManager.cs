@@ -88,7 +88,7 @@ namespace Polyfacing.Core.Services.Serialization
 
         #region Methods
         /// <summary>
-        /// serializes with Dynamic Jil by default
+        /// serializes with Binary Serializer by default
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>

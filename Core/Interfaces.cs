@@ -42,7 +42,7 @@ namespace Polyfacing.Core
         Type OfType { get; }
         object GetRoot();
         List<IDecorating> GetFaces();
-
+        List<string> GetFaceNames();
         IDecorating As(string name);
         U As<U>(string name) where U : IDecorating;
         IPolyface Has(string name, IDecorating facet);

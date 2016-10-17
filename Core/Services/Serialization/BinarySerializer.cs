@@ -1,4 +1,5 @@
 ﻿using Jil;
+using Polyfacing.Core.Services.Serialization.Binary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,7 +45,7 @@ namespace Polyfacing.Core.Services.Serialization
             try
             {
                 BinaryFormatter bf = new BinaryFormatter();
-                bf.SurrogateSelector = new UnattributedTypeSurrogateSelector();
+                bf.SurrogateSelector = Strategies.GetBestSelector(); //new StrategizedSurrogateSelector();
                 using (MemoryStream ms = new MemoryStream())
                 {
                     bf.Serialize(ms, obj);
@@ -66,7 +67,7 @@ namespace Polyfacing.Core.Services.Serialization
             try
             {
                 BinaryFormatter bf = new BinaryFormatter();
-                bf.SurrogateSelector = new UnattributedTypeSurrogateSelector();
+                bf.SurrogateSelector = Strategies.GetBestSelector();// new StrategizedSurrogateSelector();
                 byte[] b = Convert.FromBase64String(s);//Encoding.ASCII.GetBytes(s);// 
 
                 using (MemoryStream ms = new MemoryStream(b))
